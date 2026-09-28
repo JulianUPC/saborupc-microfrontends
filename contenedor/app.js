@@ -1,6 +1,7 @@
 // Registro: el contenedor solo conoce nombre, ruta, URL y el global que expone cada MFE
 const REGISTRO = [
   { id: 'catalogo', ruta: '#/catalogo', etiqueta: 'Catálogo', url: 'http://localhost:3001/catalogo.js', global: 'MFE_catalogo' },
+  { id: 'carrito',  ruta: '#/carrito',  etiqueta: 'Carrito',  url: 'http://localhost:3002/carrito.js',  global: 'MFE_carrito', precarga: true }
 ];
 
 const salida = document.getElementById('salida');
@@ -56,3 +57,9 @@ async function navegar() {
     document.getElementById('reintentar').onclick = navegar;
   }
 }
+// Arranque
+document.getElementById('nav').innerHTML =
+  REGISTRO.map(r => `<a href="${r.ruta}">${r.etiqueta}</a>`).join('');
+  REGISTRO.filter(r => r.precarga).forEach(r => cargar(r).catch(e => console.warn(e.message)));
+  window.addEventListener('hashchange', navegar);
+navegar();
