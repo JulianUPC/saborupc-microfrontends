@@ -1,7 +1,8 @@
 // Registro: el contenedor solo conoce nombre, ruta, URL y el global que expone cada MFE
 const REGISTRO = [
   { id: 'catalogo', ruta: '#/catalogo', etiqueta: 'Catálogo', url: 'http://localhost:3001/catalogo.js', global: 'MFE_catalogo' },
-  { id: 'carrito',  ruta: '#/carrito',  etiqueta: 'Carrito',  url: 'http://localhost:3002/carrito.js',  global: 'MFE_carrito', precarga: true }
+  { id: 'carrito',  ruta: '#/carrito',  etiqueta: 'Carrito',  url: 'http://localhost:3002/carrito.js',  global: 'MFE_carrito', precarga: true },
+  { id: 'pedidos',  ruta: '#/pedidos',  etiqueta: 'Pedidos',  url: 'http://localhost:3004/pedidos.js',  global: 'MFE_pedidos', precarga: true }
 ];
 
 const salida = document.getElementById('salida');
