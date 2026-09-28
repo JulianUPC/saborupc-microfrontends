@@ -57,6 +57,12 @@ async function navegar() {
     document.getElementById('reintentar').onclick = navegar;
   }
 }
+
+// Notificaciones y contador: el contenedor solo ESCUCHA eventos
+window.addEventListener('carrito:actualizado', e => {
+  document.getElementById('badge').textContent = e.detail.cantidad;
+});
+
 // Arranque
 document.getElementById('nav').innerHTML =
   REGISTRO.map(r => `<a href="${r.ruta}">${r.etiqueta}</a>`).join('');
