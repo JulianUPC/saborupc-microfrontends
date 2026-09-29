@@ -33,13 +33,13 @@ El contenedor no conoce el código interno de ningún MFE: solo sabe su nombre, 
 
 Requisitos: Node.js (LTS) instalado.
 
-Cada carpeta se sirve de forma independiente. Abre una terminal por carpeta y ejecuta, dentro de ella:
+Cada carpeta se sirve de forma independiente. Abre una terminal y ejecuta, dentro de ella:
 
-```powershell
-npx http-server . -p <puerto> -c-1 --cors
-```
+foreach ($s in @(@('contenedor',3000),@('mfe-catalogo',3001),@('mfe-carrito',3002),@('mfe-perfil',3003),@('mfe-pedidos',3004))) {                                                                                                                               
+Start-Process powershell -ArgumentList "-NoExit","-Command","cd '$PWD\$($s[0])'; npx http-server . -p $($s[1]) -c-1 --cors"        
+}                                  
 
-Reemplaza `<puerto>` según la tabla de abajo. `-c-1` desactiva la caché (necesario para ver cambios al instante) y `--cors` permite que el contenedor cargue scripts de otro puerto.
+Esto hace que todos los puertos se ejecuten sin necesidad de ejecutar uno por uno.
 
 Con los cinco servidores corriendo, abre `http://localhost:3000` en el navegador.
 
