@@ -33,15 +33,25 @@ El contenedor no conoce el código interno de ningún MFE: solo sabe su nombre, 
 
 Requisitos: Node.js (LTS) instalado.
 
-Cada carpeta se sirve de forma independiente. Abre una terminal y ejecuta, dentro de ella:
+Cada carpeta se sirve de forma independiente, en su propio puerto. La forma más rápida de levantar los cinco servidores a la vez es este comando, ejecutado en PowerShell **desde la carpeta raíz del repositorio** (la que contiene las cinco subcarpetas):
 
-foreach ($s in @(@('contenedor',3000),@('mfe-catalogo',3001),@('mfe-carrito',3002),@('mfe-perfil',3003),@('mfe-pedidos',3004))) {                                                                                                                               
-Start-Process powershell -ArgumentList "-NoExit","-Command","cd '$PWD\$($s[0])'; npx http-server . -p $($s[1]) -c-1 --cors"        
-}                                  
+```powershell
+foreach ($s in @(@('contenedor',3000),@('mfe-catalogo',3001),@('mfe-carrito',3002),@('mfe-perfil',3003),@('mfe-pedidos',3004))) {
+  Start-Process powershell -ArgumentList "-NoExit","-Command","cd '$PWD\$($s[0])'; npx http-server . -p $($s[1]) -c-1 --cors"
+}
+```
 
-Esto hace que todos los puertos se ejecuten sin necesidad de ejecutar uno por uno.
+Esto abre cinco ventanas nuevas de PowerShell, cada una sirviendo su carpeta en el puerto que le corresponde. Déjalas abiertas mientras trabajas; para apagar un servidor, entra a su ventana y pulsa Ctrl+C.
 
-Con los cinco servidores corriendo, abre `http://localhost:3000` en el navegador.
+Alternativa manual, si prefieres levantar cada uno por separado: abre una terminal por carpeta y, dentro de ella, ejecuta:
+
+```powershell
+npx http-server . -p <puerto> -c-1 --cors
+```
+
+Reemplaza `<puerto>` según la tabla de abajo. `-c-1` desactiva la caché (necesario para ver cambios al instante) y `--cors` permite que el contenedor cargue scripts de otro puerto.
+
+Con los cinco servidores corriendo (por cualquiera de las dos formas), abre `http://localhost:3000` en el navegador.
 
 Para probar el MFE de Seguimiento de pedidos de forma aislada (sin el contenedor), abre `http://localhost:3004/contrato.html`: debe mostrar una lista de verificaciones, todas en ✓.
 
