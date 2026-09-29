@@ -2,7 +2,8 @@
 const REGISTRO = [
   { id: 'catalogo', ruta: '#/catalogo', etiqueta: 'Catálogo', url: 'http://localhost:3001/catalogo.js', global: 'MFE_catalogo' },
   { id: 'carrito',  ruta: '#/carrito',  etiqueta: 'Carrito',  url: 'http://localhost:3002/carrito.js',  global: 'MFE_carrito', precarga: true },
-  { id: 'pedidos',  ruta: '#/pedidos',  etiqueta: 'Pedidos',  url: 'http://localhost:3004/pedidos.js',  global: 'MFE_pedidos', precarga: true }
+  { id: 'pedidos',  ruta: '#/pedidos',  etiqueta: 'Pedidos',  url: 'http://localhost:3004/pedidos.js',  global: 'MFE_pedidos', precarga: true },
+  { id: 'perfil',   ruta: '#/perfil',   etiqueta: 'Perfil',   url: 'http://localhost:3003/perfil.js',   global: 'MFE_perfil' },
 ];
 
 const salida = document.getElementById('salida');
@@ -59,14 +60,23 @@ async function navegar() {
   }
 }
 
-// Notificaciones y contador: el contenedor solo ESCUCHA eventos
+/// Notificaciones y contador: el contenedor solo ESCUCHA eventos
+let timerNotif;
+function notificar(texto) {
+  const n = document.getElementById('notificacion');
+  n.textContent = texto; n.hidden = false;
+  clearTimeout(timerNotif);
+  timerNotif = setTimeout(() => (n.hidden = true), 3000);
+}
 window.addEventListener('carrito:actualizado', e => {
   document.getElementById('badge').textContent = e.detail.cantidad;
 });
+window.addEventListener('pedido:estado', e => notificar(`Pedido #${e.detail.id}: ${e.detail.estado}`));
+window.addEventListener('pedido:confirmado', () => { location.hash = '#/pedidos'; });
 
 // Arranque
 document.getElementById('nav').innerHTML =
   REGISTRO.map(r => `<a href="${r.ruta}">${r.etiqueta}</a>`).join('');
-  REGISTRO.filter(r => r.precarga).forEach(r => cargar(r).catch(e => console.warn(e.message)));
-  window.addEventListener('hashchange', navegar);
+REGISTRO.filter(r => r.precarga).forEach(r => cargar(r).catch(e => console.warn(e.message)));
+window.addEventListener('hashchange', navegar);
 navegar();
