@@ -60,7 +60,7 @@ async function navegar() {
   }
 }
 
-/// Notificaciones y contador: el contenedor solo ESCUCHA eventos
+// Notificaciones y contador: el contenedor solo ESCUCHA eventos
 let timerNotif;
 function notificar(texto) {
   const n = document.getElementById('notificacion');
