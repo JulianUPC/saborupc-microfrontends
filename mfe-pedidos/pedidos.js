@@ -67,7 +67,7 @@
         return { lista, ESTADOS, fmt };
       },
       template: `
-        <h2>Seguimiento de pedidos</h2>
+        <h2>Seguimiento de pedidos v1.1</h2>
         <p v-if="!lista.length">Aún no tienes pedidos.</p>
         <div v-for="p in lista" :key="p.id" class="ped-card">
           <b>Pedido #{{ p.id }}</b> — {{ fmt(p.total) }}
@@ -80,5 +80,5 @@
   }
   function unmount(el) { if (app) app.unmount(); app = null; el.innerHTML = ''; }
 
-  window.MFE_pedidos = { version: '1.0.0', mount, unmount };
+  window.MFE_pedidos = { version: '1.1.0', mount, unmount };
 })();
