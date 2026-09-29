@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Contrato – MFE Pedidos</title></head>
+<body>
+<h1>Prueba de contrato: MFE Pedidos</h1>
+<ul id="resultado"></ul>
+<div id="prueba" hidden></div>
+<script>window.PEDIDOS_INTERVALO_MS = 300;</script>
+<script src="pedidos.js"></script>
+<script>
+const out = document.getElementById('resultado');
+function chk(desc, cond) {
+  console.assert(cond, desc);
+  out.insertAdjacentHTML('beforeend', `<li>${cond ? '✓' : '✗'} ${desc}</li>`);
+}
+function esperarEstado(id) {
+  return new Promise(res => {
+    const h = e => { if (e.detail.id === id) { clearTimeout(t); window.removeEventListener('pedido:estado', h); res(e.detail); } };
+    const t = setTimeout(() => { window.removeEventListener('pedido:estado', h); res(null); }, 2000);
+    window.addEventListener('pedido:estado', h);
+  });
+}
+(async () => {
+  const mfe = window.MFE_pedidos;
+  chk('Expone window.MFE_pedidos', !!mfe);
+  chk('Expone mount() y unmount()', typeof mfe?.mount === 'function' && typeof mfe?.unmount === 'function');
+  chk('Expone version (string)', typeof mfe?.version === 'string');
+
+  const el = document.getElementById('prueba');
+  await mfe.mount(el, {});
+  chk('mount() genera contenido', el.innerHTML.trim().length > 0);
+
+  const id1 = Date.now();
+  const p1 = esperarEstado(id1);
+  window.dispatchEvent(new CustomEvent('pedido:confirmado', { detail: { version: 1, id: id1, items: [], total: 0, fecha: new Date().toISOString() } }));
+  const d = await p1;
+  chk('Publica pedido:estado al avanzar', d !== null);
+  chk('detail = {version:number, id:number, estado:string}', !!d && typeof d.version === 'number' && typeof d.id === 'number' && typeof d.estado === 'string');
+  chk('estado es un valor acordado', !!d && ['Recibido','En preparación','En camino','Entregado'].includes(d.estado));
+
+  // Compatibilidad hacia atrás: un campo nuevo en el detail no rompe al consumidor
+  const id2 = id1 + 1;
+  const p2 = esperarEstado(id2);
+  window.dispatchEvent(new CustomEvent('pedido:confirmado', { detail: { version: 1, id: id2, items: [], total: 0, fecha: '', direccion: 'Calle 1 #2-3' } }));
+  chk('Tolera campo nuevo en pedido:confirmado', (await p2) !== null);
+
+  mfe.unmount(el);
+  chk('unmount() limpia el contenido', el.innerHTML.trim() === '');
+})();
+</script>
+</body>
+</html>
